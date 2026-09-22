@@ -8,14 +8,42 @@ pipeline {
             steps {
                 echo 'Building Employee API...'
                 sh 'chmod +x mvnw'
-                sh './mvnw clean package'
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'mysql-credentials',
+                        usernameVariable: 'DB_USERNAME',
+                        passwordVariable: 'DB_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        export SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/employee_db
+                        export SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+                        export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+                        ./mvnw clean package -DskipTests
+                    '''
+                }
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                sh './mvnw test'
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'mysql-credentials',
+                        usernameVariable: 'DB_USERNAME',
+                        passwordVariable: 'DB_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        export SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/employee_db
+                        export SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+                        export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+                        ./mvnw test
+                    '''
+                }
             }
         }
     }
