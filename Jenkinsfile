@@ -7,14 +7,15 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Employee API...'
-                sh 'mvnw.cmd clean package'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean package'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                sh 'mvnw.cmd test'
+                sh './mvnw test'
             }
         }
     }
