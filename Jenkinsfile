@@ -1,5 +1,4 @@
 pipeline {
-
     agent any
 
     stages {
@@ -7,6 +6,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Employee API...'
+
                 sh 'chmod +x mvnw'
 
                 withCredentials([
@@ -20,6 +20,7 @@ pipeline {
                         export SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/employee_db
                         export SPRING_DATASOURCE_USERNAME=$DB_USERNAME
                         export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+
                         ./mvnw clean package -DskipTests
                     '''
                 }
@@ -41,9 +42,20 @@ pipeline {
                         export SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/employee_db
                         export SPRING_DATASOURCE_USERNAME=$DB_USERNAME
                         export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+
                         ./mvnw test
                     '''
                 }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                echo 'Building Docker image...'
+
+                sh '''
+                    docker build -t employee-api:latest .
+                '''
             }
         }
     }
