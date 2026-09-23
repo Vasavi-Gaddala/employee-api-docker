@@ -61,11 +61,20 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                 echo 'Deploying Employee API...'
+                echo 'Deploying Employee API...'
 
+            withCredentials([
+                usernamePassword(
+                    credentialsId: 'mysql-credentials',
+                    usernameVariable: 'DB_USERNAME',
+                    passwordVariable: 'DB_PASSWORD'
+                 )
+            ]) {
                 sh '''
-                   docker compose up -d
+                    export MYSQL_ROOT_PASSWORD="$DB_PASSWORD"
+                    docker compose up -d
                 '''
+                }
             }
         }
     }
