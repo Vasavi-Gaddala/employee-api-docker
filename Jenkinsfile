@@ -58,5 +58,15 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            steps {
+                 echo 'Deploying Employee API...'
+
+                sh '''
+                   docker compose up -d
+                '''
+            }
+        }
     }
 }
