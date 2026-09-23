@@ -72,7 +72,7 @@ pipeline {
             ]) {
                 sh '''
                     export MYSQL_ROOT_PASSWORD="$DB_PASSWORD"
-                    docker compose up -d
+                    docker compose -p employee-api up -d
                 '''
                 }
             }
